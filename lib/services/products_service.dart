@@ -1,4 +1,6 @@
 
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -104,6 +106,28 @@ class ProductsService extends FirebaseService {
       if (response.statusCode != 200) {
         throw Exception(json.decode(response.body)['error']);
       }
+      return true;
+    } catch (error) {
+      print(error);
+      return false;
+    }
+  }
+
+  Future<bool> saveFavoriteStatus(Product product) async {
+    try {
+      final url = Uri.parse(
+        '$databaseUrl/userFavorites/$userId/${product.id}.json?auth=$token');
+      final response = await http.put(
+        url,
+        body: json.encode(
+          product.isFavorite,
+        ),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(json.decode(response.body)['error']);
+      }
+
       return true;
     } catch (error) {
       print(error);
